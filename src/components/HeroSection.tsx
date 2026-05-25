@@ -24,13 +24,12 @@ export default function HeroSection() {
           #106dea → #06a4e2 → #0e9ee2 → #08b2e0 → #3abede → #85bad3 → #97def1 → #d1d8dd */}
       <div
         aria-hidden="true"
+        className="hero-gradient-flow"
         style={{
           position: 'absolute',
           inset: 0,
           zIndex: 0,
           pointerEvents: 'none',
-          background:
-            'linear-gradient(180deg, #1360ee 0%, #1360ee 6%, #1266ed 13%, #0d73e3 22%, #0a84e3 30%, #0a7fde 38%, #06a4e2 47%, #0e9ee2 55%, #08b2e0 63%, #3abede 72%, #85bad3 82%, #97def1 91%, #d1d8dd 100%)',
         }}
       />
 
