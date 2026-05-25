@@ -1,0 +1,1674 @@
+@import "tailwindcss";
+
+/* Tailwind v4 is CSS-first: the legacy tailwind.config.ts (v3 syntax) is NOT
+   auto-loaded. Theme tokens, the `dark:` variant, and design tokens must be
+   declared here or Tailwind generates no CSS for them. */
+
+/* Restore class-based dark mode (original intent: darkMode: "class").
+   Without this, v4 defaults `dark:` to prefers-color-scheme, which would let
+   dark-OS users trigger dark styles on a light-only design. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* shadcn/ui CSS Variables */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@theme inline {
+  /* Font families — drive the `font-poppins` / `font-inter` utilities */
+  --font-poppins: var(--font-poppins), sans-serif;
+  --font-inter: var(--font-inter), sans-serif;
+
+  /* Color tokens — map shadcn HSL-triplet vars to v4 color utilities so
+     classes like bg-background, text-foreground, border-border, bg-primary
+     actually generate CSS (the v3 config that defined these is ignored). */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+/* NOTE: the previous `@media (prefers-color-scheme: dark)` block that forced
+   --background/--foreground to dark was removed. This is a light-only design;
+   that block made dark-OS users render a dark background (a visual bug / flash
+   on refresh). The .dark class block above is retained for opt-in dark mode. */
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+/* Single scroll container — html is the only element that controls page scroll.
+   Don't put overflow on body/main or you'll get duplicate scrollbars. */
+html {
+  overflow-x: clip;
+}
+
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-poppins), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Font Utility Classes */
+.font-poppins {
+  font-family: var(--font-poppins), sans-serif;
+}
+
+.font-inter {
+  font-family: var(--font-inter), sans-serif;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Focus Styles */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Selection — must use hsl() wrapper since --accent stores raw HSL values */
+::selection {
+  background-color: hsl(217 91% 60% / 0.28);
+  color: inherit;
+}
+
+/* Floating Blob Animations */
+@keyframes blob-float-1 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  33%       { transform: translate(20px, -25px) scale(1.05); }
+  66%       { transform: translate(-15px, 15px) scale(0.96); }
+}
+
+@keyframes blob-float-2 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  33%       { transform: translate(-22px, 18px) scale(1.04); }
+  66%       { transform: translate(18px, -20px) scale(0.97); }
+}
+
+@keyframes blob-float-3 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  33%       { transform: translate(15px, 22px) scale(0.95); }
+  66%       { transform: translate(-20px, -10px) scale(1.06); }
+}
+
+@keyframes blob-float-4 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  33%       { transform: translate(-12px, -20px) scale(1.03); }
+  66%       { transform: translate(18px, 12px) scale(0.97); }
+}
+
+@keyframes blob-float-5 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  33%       { transform: translate(10px, -15px) scale(1.04); }
+  66%       { transform: translate(-8px, 18px) scale(0.98); }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .blob {
+    animation-duration: 60s !important;
+  }
+}
+
+
+/* Animated Floating Gradient Orbs - Stripe-style smooth floating */
+/* REPLACED WITH WATER WAVE ANIMATIONS BELOW */
+
+/* Water Wave Effect - Lateral flowing motion like ocean waves */
+@keyframes waveMove1 {
+  0%   { transform: translateZ(0) translateX(-60px) translateY(0px) scale(1); }
+  25%  { transform: translateZ(0) translateX(0px) translateY(-30px) scale(1.05); }
+  50%  { transform: translateZ(0) translateX(60px) translateY(0px) scale(1); }
+  75%  { transform: translateZ(0) translateX(0px) translateY(30px) scale(0.96); }
+  100% { transform: translateZ(0) translateX(-60px) translateY(0px) scale(1); }
+}
+
+@keyframes waveMove2 {
+  0%   { transform: translateZ(0) translateX(40px) translateY(20px) scale(1.02); }
+  33%  { transform: translateZ(0) translateX(-40px) translateY(-20px) scale(0.97); }
+  66%  { transform: translateZ(0) translateX(20px) translateY(30px) scale(1.04); }
+  100% { transform: translateZ(0) translateX(40px) translateY(20px) scale(1.02); }
+}
+
+@keyframes waveMove3 {
+  0%   { transform: translateZ(0) translateX(0px) translateY(0px) scale(1); }
+  50%  { transform: translateZ(0) translateX(-50px) translateY(-40px) scale(1.06); }
+  100% { transform: translateZ(0) translateX(0px) translateY(0px) scale(1); }
+}
+
+@keyframes waveMove4 {
+  0%   { transform: translateZ(0) translateX(-30px) translateY(-25px) scale(1); }
+  40%  { transform: translateZ(0) translateX(45px) translateY(15px) scale(1.04); }
+  80%  { transform: translateZ(0) translateX(-20px) translateY(35px) scale(0.98); }
+  100% { transform: translateZ(0) translateX(-30px) translateY(-25px) scale(1); }
+}
+
+@keyframes waveMove5 {
+  0%   { transform: translateZ(0) translateX(50px) translateY(0px) scale(1); }
+  30%  { transform: translateZ(0) translateX(-30px) translateY(-35px) scale(1.05); }
+  60%  { transform: translateZ(0) translateX(35px) translateY(25px) scale(0.96); }
+  100% { transform: translateZ(0) translateX(50px) translateY(0px) scale(1); }
+}
+
+/* Respect user's motion preferences for water waves */
+@media (prefers-reduced-motion: reduce) {
+  .water-wave-orb {
+    animation-duration: 60s !important;
+  }
+}
+
+/* Stripe-Style Animated Gradient Orbs - Over Building Area */
+@keyframes stripeOrbA {
+  0%   { transform: translate(0px, 0px) scale(1) translateZ(0); }
+  25%  { transform: translate(35px, -28px) scale(1.05) translateZ(0); }
+  50%  { transform: translate(-18px, 22px) scale(0.97) translateZ(0); }
+  75%  { transform: translate(22px, 35px) scale(1.03) translateZ(0); }
+  100% { transform: translate(0px, 0px) scale(1) translateZ(0); }
+}
+
+@keyframes stripeOrbB {
+  0%   { transform: translate(0px, 0px) scale(1) rotate(0deg) translateZ(0); }
+  30%  { transform: translate(-32px, 28px) scale(1.06) rotate(8deg) translateZ(0); }
+  60%  { transform: translate(28px, -22px) scale(0.95) rotate(-6deg) translateZ(0); }
+  85%  { transform: translate(-15px, 30px) scale(1.02) rotate(4deg) translateZ(0); }
+  100% { transform: translate(0px, 0px) scale(1) rotate(0deg) translateZ(0); }
+}
+
+@keyframes stripeOrbC {
+  0%   { transform: translate(0px, 0px) scale(1) translateZ(0); }
+  28%  { transform: translate(28px, 32px) scale(0.96) translateZ(0); }
+  56%  { transform: translate(-35px, -18px) scale(1.07) translateZ(0); }
+  78%  { transform: translate(18px, -28px) scale(1.01) translateZ(0); }
+  100% { transform: translate(0px, 0px) scale(1) translateZ(0); }
+}
+
+@keyframes stripeOrbD {
+  0%   { transform: translate(0px, 0px) scale(1) rotate(0deg) translateZ(0); }
+  32%  { transform: translate(-25px, -30px) scale(1.04) rotate(-10deg) translateZ(0); }
+  64%  { transform: translate(30px, 20px) scale(0.97) rotate(7deg) translateZ(0); }
+  88%  { transform: translate(-18px, 25px) scale(1.02) rotate(-5deg) translateZ(0); }
+  100% { transform: translate(0px, 0px) scale(1) rotate(0deg) translateZ(0); }
+}
+
+@keyframes stripeOrbE {
+  0%   { transform: translate(0px, 0px) scale(1) translateZ(0); }
+  26%  { transform: translate(38px, -20px) scale(1.06) translateZ(0); }
+  52%  { transform: translate(-22px, 28px) scale(0.96) translateZ(0); }
+  76%  { transform: translate(25px, 18px) scale(1.03) translateZ(0); }
+  100% { transform: translate(0px, 0px) scale(1) translateZ(0); }
+}
+
+@keyframes stripeOrbF {
+  0%   { transform: translate(0px, 0px) scale(1) rotate(0deg) translateZ(0); }
+  34%  { transform: translate(-28px, 25px) scale(1.05) rotate(12deg) translateZ(0); }
+  68%  { transform: translate(32px, -30px) scale(0.95) rotate(-8deg) translateZ(0); }
+  90%  { transform: translate(-15px, 20px) scale(1.02) rotate(5deg) translateZ(0); }
+  100% { transform: translate(0px, 0px) scale(1) rotate(0deg) translateZ(0); }
+}
+
+/* Respect user's motion preferences for Stripe orbs */
+@media (prefers-reduced-motion: reduce) {
+  .stripe-orb {
+    animation-duration: 60s !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO — AMBIENT BLOBS
+   Rules that make this work:
+   • Each blob is LARGE (85–115%) so overflow:hidden never
+     fully clips it even at max drift — always in view
+   • border-radius is FIXED per blob (organic shape, no
+     morph) — avoids compositing glitches from dual-prop
+     keyframe interpolation
+   • translate3d forces the GPU compositing layer so the
+     browser never re-rasterises mid-animation
+   • Negative animation-delay staggers blobs across their
+     cycle so they are always in different phase states —
+     no sync, no gap, no empty frame
+   • Cycle lengths are intentionally prime-ish (19,22,25,
+     28,31) so two blobs never re-sync
+   ══════════════════════════════════════════════════════ */
+
+.hero-blob {
+  position: absolute;
+  pointer-events: none;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Blob A — wide sky-blue wash, covers full top region */
+.hero-blob-a {
+  width: 115%; height: 120%;
+  background: rgba(120, 200, 245, 0.58);
+  filter: blur(88px);
+  top: -10%; left: -8%;
+  border-radius: 60% 40% 55% 45% / 55% 50% 50% 45%;
+  animation: heroDriftA 22s ease-in-out infinite;
+  animation-delay: -7s;
+}
+
+/* Blob B — warm gold, anchored bottom-center */
+.hero-blob-b {
+  width: 88%; height: 84%;
+  background: rgba(250, 195, 45, 0.60);
+  filter: blur(92px);
+  bottom: -10%; left: 6%;
+  border-radius: 50% 50% 58% 42% / 52% 48% 42% 58%;
+  animation: heroDriftB 28s ease-in-out infinite;
+  animation-delay: -14s;
+}
+
+/* Blob C — vivid cyan, covers top-right mass */
+.hero-blob-c {
+  width: 95%; height: 110%;
+  background: rgba(35, 165, 218, 0.62);
+  filter: blur(80px);
+  top: -8%; right: -8%;
+  border-radius: 58% 42% 42% 58% / 48% 55% 45% 52%;
+  animation: heroDriftC 19s ease-in-out infinite;
+  animation-delay: -3s;
+}
+
+/* Blob D — deep saturated blue, left anchor */
+.hero-blob-d {
+  width: 68%; height: 88%;
+  background: rgba(15, 100, 165, 0.70);
+  filter: blur(82px);
+  top: 4%; left: -10%;
+  border-radius: 45% 55% 55% 45% / 50% 45% 55% 50%;
+  animation: heroDriftD 31s ease-in-out infinite;
+  animation-delay: -19s;
+}
+
+/* Blob E — pale luminous highlight, drifts through center */
+.hero-blob-e {
+  width: 60%; height: 72%;
+  background: rgba(185, 232, 255, 0.66);
+  filter: blur(90px);
+  top: 10%; left: 28%;
+  border-radius: 52% 48% 45% 55% / 45% 52% 55% 48%;
+  animation: heroDriftE 25s ease-in-out infinite;
+  animation-delay: -11s;
+}
+
+/* ── Keyframes: translate3d only, max ±10% so blobs
+      never leave visible area given their oversized dims ── */
+
+@keyframes heroDriftA {
+  0%, 100% { transform: translate3d(  0%,   0%, 0); }
+  25%       { transform: translate3d(  7%,   5%, 0); }
+  50%       { transform: translate3d(  4%,  -6%, 0); }
+  75%       { transform: translate3d( -4%,   3%, 0); }
+}
+
+@keyframes heroDriftB {
+  0%, 100% { transform: translate3d(  0%,   0%, 0); }
+  22%       { transform: translate3d( -5%,  -8%, 0); }
+  52%       { transform: translate3d(  6%,  -5%, 0); }
+  78%       { transform: translate3d(  2%, -10%, 0); }
+}
+
+@keyframes heroDriftC {
+  0%, 100% { transform: translate3d(  0%,   0%, 0); }
+  30%       { transform: translate3d( -8%,   4%, 0); }
+  62%       { transform: translate3d(-10%,  -2%, 0); }
+  82%       { transform: translate3d( -6%,   6%, 0); }
+}
+
+@keyframes heroDriftD {
+  0%, 100% { transform: translate3d(  0%,   0%, 0); }
+  38%       { transform: translate3d(  8%,  -6%, 0); }
+  72%       { transform: translate3d( 10%,  -1%, 0); }
+}
+
+@keyframes heroDriftE {
+  0%, 100% { transform: translate3d(  0%,   0%, 0); }
+  32%       { transform: translate3d( -6%,   4%, 0); }
+  66%       { transform: translate3d(  5%,  -6%, 0); }
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO DARK PATCHES — animated deep-navy cloud masses
+   ─ Same navy palette as the static patches in HeroSection
+   ─ Each patch DRIFTS (transform) + MORPHS (clip-path)
+   ─ NO mix-blend-mode → dark stays dark, colour never washes
+   ─ Soft radial-gradient fill so clipped edges read as cloud
+   ─ Prime-ish, phase-shifted cycles → patches never re-sync
+   ══════════════════════════════════════════════════════ */
+
+/*
+  HERO WATER WAVES — all smooth SVG bezier ribbons (no angular
+  clip-path). Two wide HORIZONTAL waves with gently waving top &
+  bottom edges glide across the full screen; one slim VERTICAL wave
+  flows diagonally. No mix-blend-mode → dark blue stays pure.
+*/
+
+/* ── Wide HORIZONTAL water waves — span the whole width and glide
+      seamlessly across the screen (start off-right, exit off-left,
+      loop with no visible jump). The path morphs (SMIL) for ripple. ── */
+.hero-wave-horiz {
+  position: absolute;
+  left: 0;
+  width: 78%;
+  height: clamp(150px, 34%, 340px);
+  pointer-events: none;
+  filter: blur(22px);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.hero-wave-horiz-1 {
+  top: 14%;
+  animation: heroHorizWaveFlow1 26s linear infinite;
+}
+.hero-wave-horiz-2 {
+  top: 46%;
+  animation: heroHorizWaveFlow2 32s linear infinite;
+  animation-delay: -13s;
+}
+
+/* width 78% → travel from off-right (130%) to off-left (-230%) so the
+   band crosses the whole hero and re-enters seamlessly */
+@keyframes heroHorizWaveFlow1 {
+  0%   { transform: translate3d( 130%, 0, 0); }
+  100% { transform: translate3d(-230%, 0, 0); }
+}
+/* opposite direction: left → right */
+@keyframes heroHorizWaveFlow2 {
+  0%   { transform: translate3d(-230%, 0, 0); }
+  100% { transform: translate3d( 130%, 0, 0); }
+}
+
+/* ── Slim VERTICAL water wave — flows DIAGONALLY top-right →
+      bottom-left, off-screen at both ends for a seamless loop. ── */
+.hero-wave-vert {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: clamp(150px, 20vw, 320px);
+  height: clamp(300px, 80%, 640px);
+  pointer-events: none;
+  filter: blur(26px);
+  will-change: transform;
+  animation: heroVertWaveFlow 20s linear infinite;
+}
+
+@keyframes heroVertWaveFlow {
+  /* begin off-screen top-left, sweep down-right, exit off bottom-right */
+  0%   { transform: translate3d(-140%, -90%, 0) rotate(-8deg); }
+  100% { transform: translate3d( 440%, 120%, 0) rotate(8deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-wave-horiz,
+  .hero-wave-vert { animation: none !important; }
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO WAVE LAYERS — zig-zag flowing edge
+   ─ clip-path: polygon() creates the zig-zag boundary
+   ─ Each keyframe shifts the polygon points → wave flows
+   ─ filter: blur(3px) softens sharp polygon corners
+   ─ Wave 1: BOTTOM-LEFT pivot (18s)
+   ─ Wave 2: TOP-RIGHT  pivot (23s — never syncs with W1)
+   ─ Both always on — no opacity fade
+   ══════════════════════════════════════════════════════ */
+
+.hero-wave {
+  position: absolute;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Wave 1 — bottom-left anchor, zig-zag on RIGHT edge */
+.hero-wave-1 {
+  width: 130%;
+  height: 232%;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    88deg,
+    transparent               0%,
+    rgba(255, 255, 255, 0.32)  20%,
+    rgba(148, 215, 252, 0.20)  48%,
+    rgba(180, 230, 255, 0.08)  70%,
+    transparent                84%
+  );
+  transform-origin: 0% 100%;
+  animation: heroWave1 18s ease-in-out infinite;
+}
+
+/* Wave 2 — top-right anchor, zig-zag on LEFT edge */
+.hero-wave-2 {
+  width: 126%;
+  height: 220%;
+  top: 0;
+  right: 0;
+  background: linear-gradient(
+    268deg,
+    transparent               0%,
+    rgba(255, 255, 255, 0.28)  20%,
+    rgba(130, 210, 252, 0.18)  48%,
+    rgba(160, 225, 255, 0.07)  70%,
+    transparent                84%
+  );
+  transform-origin: 100% 0%;
+  animation: heroWave2 23s ease-in-out infinite;
+}
+
+/*
+  Wave 1 keyframes:
+  – clip-path polygon always has 13 points (same count = smooth morph)
+  – Right edge zig-zags between ~66% and ~83% of element width
+    (= roughly 86–108% of hero width → the zig-zag sits at hero's
+     right edge / slightly beyond, clipped by the overflow:hidden container)
+  – Three keyframe states are phase-shifted so the zig-zag
+    appears to FLOW downward as the wave rotates
+*/
+@keyframes heroWave1 {
+  0%, 100% { transform: rotate(-24deg); }
+  33%       { transform: rotate(5deg);  }
+  66%       { transform: rotate(20deg); }
+}
+
+/*
+  Wave 2 keyframes:
+  – Left edge zig-zags between ~12% and ~30% of element width
+    (= near the hero's left edge, slightly inset)
+  – Phase-shifted states make the zig-zag flow upward
+    as this wave rotates from top-right
+*/
+@keyframes heroWave2 {
+  0%, 100% { transform: rotate(22deg);  }
+  33%       { transform: rotate(5deg);  }
+  66%       { transform: rotate(-18deg); }
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO SUNRISE GLOW — warm golden light behind buildings
+   ══════════════════════════════════════════════════════ */
+
+/* Primary glow — wide warm base that breathes and drifts */
+.hero-sunrise-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 68% 62% at 50% 100%,
+    rgba(255, 255, 210, 1.00)  0%,
+    rgba(255, 238, 120, 0.88)  9%,
+    rgba(255, 210, 55,  0.62) 24%,
+    rgba(255, 180, 15,  0.34) 44%,
+    rgba(255, 155, 0,   0.14) 62%,
+    transparent                80%
+  );
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  animation: sunriseGlow 12s ease-in-out infinite;
+}
+
+/* Secondary glow — smaller hot core, moves counter to primary */
+.hero-sunrise-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 40% 36% at 50% 100%,
+    rgba(255, 255, 240, 0.90)  0%,
+    rgba(255, 245, 160, 0.60) 18%,
+    rgba(255, 220, 60,  0.25) 40%,
+    transparent                65%
+  );
+  will-change: transform, opacity;
+  animation: sunriseGlowCore 9s ease-in-out infinite;
+  animation-delay: -3s;
+}
+
+@keyframes sunriseGlow {
+  0%, 100% {
+    opacity: 0.72;
+    transform: translate3d(  0%,   0%, 0) scale(1.00);
+  }
+  22% {
+    opacity: 0.95;
+    transform: translate3d( 10%,  -3%, 0) scale(1.10);
+  }
+  50% {
+    opacity: 1;
+    transform: translate3d(  6%,  -5%, 0) scale(1.18);
+  }
+  74% {
+    opacity: 0.82;
+    transform: translate3d(-10%,  -2%, 0) scale(1.06);
+  }
+  88% {
+    opacity: 0.76;
+    transform: translate3d( -5%,   0%, 0) scale(1.02);
+  }
+}
+
+@keyframes sunriseGlowCore {
+  0%, 100% {
+    opacity: 0.80;
+    transform: translate3d(  0%,   0%, 0) scale(1.00);
+  }
+  35% {
+    opacity: 1;
+    transform: translate3d( -8%,  -4%, 0) scale(1.14);
+  }
+  68% {
+    opacity: 0.70;
+    transform: translate3d(  9%,  -2%, 0) scale(0.92);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-blob,
+  .hero-wave,
+  .hero-sunrise-glow,
+  .hero-sunrise-glow::after { animation: none !important; }
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO DIAGONAL WAVES — two smooth wave bands:
+   • Top wave  → tilted down-right, slides from above to below hero
+   • Bottom wave → tilted up-right, slides from below to above hero
+   Smooth bezier curves give the road-section-style wavy edges.
+   ══════════════════════════════════════════════════════ */
+
+.hero-diag-wave {
+  position: absolute;
+  left: -10%;
+  width: 120%;
+  height: 38%;
+  pointer-events: none;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0); /* force GPU compositing layer */
+}
+
+.hero-diag-wave-top {
+  top: 0;
+  animation: heroDiagWaveDown 18s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+}
+
+.hero-diag-wave-bottom {
+  bottom: 0;
+  animation: heroDiagWaveUp 20s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+  animation-delay: -8s;
+}
+
+/* Only transform + opacity — compositor-only, zero repaints */
+@keyframes heroDiagWaveDown {
+  0%   { transform: translateZ(0) rotate(-10deg) translateY(-45vh); opacity: 0; }
+  12%  { opacity: 0.55; }
+  50%  { transform: translateZ(0) rotate(-10deg) translateY( 18vh); opacity: 0.72; }
+  88%  { opacity: 0.48; }
+  100% { transform: translateZ(0) rotate(-10deg) translateY( 88vh); opacity: 0; }
+}
+
+@keyframes heroDiagWaveUp {
+  0%   { transform: translateZ(0) rotate( 10deg) translateY( 45vh); opacity: 0; }
+  12%  { opacity: 0.55; }
+  50%  { transform: translateZ(0) rotate( 10deg) translateY(-18vh); opacity: 0.72; }
+  88%  { opacity: 0.48; }
+  100% { transform: translateZ(0) rotate( 10deg) translateY(-88vh); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-diag-wave { animation: none !important; }
+}
+
+/* ══════════════════════════════════════════════════════
+   ROAD SECTION — responsive vehicle scaling
+   ══════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .road-vehicles-layer { transform: scale(0.45); transform-origin: bottom center; }
+}
+@media (min-width: 481px) and (max-width: 640px) {
+  .road-vehicles-layer { transform: scale(0.58); transform-origin: bottom center; }
+}
+@media (min-width: 641px) and (max-width: 900px) {
+  .road-vehicles-layer { transform: scale(0.76); transform-origin: bottom center; }
+}
+
+/* ══════════════════════════════════════════════════════
+   SCROLL SHOWCASE — responsive sticky/stacked layout
+   ══════════════════════════════════════════════════════ */
+.ss-row {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.ss-anim-panel {
+  order: 2;
+  width: 100%;
+  height: 340px;
+  position: relative;
+  flex-shrink: 0;
+  margin-bottom: 24px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fafbff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ss-text-panel {
+  order: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 12px;
+  padding-bottom: 48px;
+}
+@media (min-width: 480px) {
+  .ss-anim-panel { height: 400px; }
+}
+@media (min-width: 640px) {
+  .ss-anim-panel { height: 520px; }
+}
+@media (min-width: 1024px) {
+  .ss-row {
+    flex-direction: row;
+    padding: 0 48px;
+    align-items: flex-start;
+  }
+  .ss-anim-panel {
+    order: unset;
+    flex: 0 0 42%;
+    width: auto;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    border-radius: 0;
+    overflow: visible;
+    background: transparent;
+    margin-bottom: 0;
+  }
+  .ss-text-panel {
+    order: unset;
+    flex: 0 0 58%;
+    width: auto;
+    min-height: 100vh;
+    padding-top: 80px;
+    padding-bottom: 80px;
+    padding-left: 56px;
+    padding-right: 0;
+  }
+  /* Zigzag: when animation is on right, text gets left side padding */
+  .ss-row--anim-right .ss-anim-panel { order: 1; padding-left: 0; }
+  .ss-row--anim-right .ss-text-panel { order: 0; padding-left: 0; padding-right: 56px; }
+}
+
+/* Feature card grid — 1 col on mobile/tablet, 2 col on desktop */
+.ss-feature-grid { grid-template-columns: 1fr; }
+@media (min-width: 1024px) {
+  .ss-feature-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Text selection — force ALL content inside the showcase text panel to be selectable.
+   Uses !important to defeat any inherited user-select:none from parents or Tailwind base. */
+.ss-text-panel,
+.ss-text-panel *,
+.ss-feature-grid,
+.ss-feature-grid * {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default !important;
+}
+/* Only the decorative SVG icons remain non-selectable so they don't intercept the caret */
+.ss-text-panel svg,
+.ss-text-panel svg *,
+.ss-feature-grid svg,
+.ss-feature-grid svg * {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  pointer-events: none !important;
+}
+/* Text cursor over actual text elements */
+.ss-text-panel h2,
+.ss-text-panel h3,
+.ss-text-panel p,
+.ss-text-panel span,
+.ss-feature-grid span,
+.ss-feature-grid p { cursor: text; }
+
+/* ══════════════════════════════════════════════════════
+   FEATURE SLIDER — responsive layout
+   ══════════════════════════════════════════════════════ */
+.fs-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 36px;
+  position: relative;
+}
+.fs-left {
+  width: 100%;
+  flex-shrink: 0;
+}
+.fs-right {
+  width: 100%;
+  flex-shrink: 0;
+}
+.fs-scene-wrap {
+  position: relative;
+  overflow: visible;
+  height: 220px;
+}
+@media (min-width: 480px) {
+  .fs-scene-wrap { height: 270px; }
+}
+@media (min-width: 640px) {
+  .fs-scene-wrap { height: 320px; }
+}
+@media (min-width: 1024px) {
+  .fs-container {
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+    padding: 0 60px;
+  }
+  .fs-left { flex: 1 1 auto; min-width: 0; width: auto; }
+  .fs-right { flex: 0 0 460px; min-width: 0; width: auto; }
+  .fs-scene-wrap { height: 320px; }
+}
+
+/* ══════════════════════════════════════════════════════
+   ROAD SECTION — CTA button responsive positioning
+   ══════════════════════════════════════════════════════ */
+.road-cta-wrap {
+  position: absolute;
+  left: clamp(12px, 4vw, 50px);
+  bottom: clamp(90px, 28%, 35%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+@media (max-width: 640px) {
+  .road-cta-wrap {
+    bottom: 28%;
+    gap: 6px;
+  }
+  .road-cta-btn {
+    padding: 8px 14px !important;
+    font-size: 11px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO SECTION — mobile overrides
+   ══════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .hero-section-wrapper {
+    height: 56vh !important;
+    min-height: 340px !important;
+  }
+  .hero-building-wrap {
+    max-width: 92vw !important;
+    width: 92vw !important;
+  }
+  .hero-headline-wrap {
+    top: 22% !important;
+  }
+}
+@media (min-width: 641px) and (max-width: 1024px) {
+  .hero-building-wrap {
+    max-width: 72vw !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   SCENE SCALE WRAPPER — used by all responsive scenes
+   Outer div adapts height to scaled canvas; inner div
+   holds the fixed-pixel canvas at transformed scale.
+   ══════════════════════════════════════════════════════ */
+.scene-scale-outer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+.scene-scale-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO CLOUD — hide on small screens
+   ══════════════════════════════════════════════════════ */
+.hero-cloud-wrap {
+  position: absolute;
+  bottom: 40%;
+  left: 5%;
+  z-index: 7;
+  pointer-events: none;
+}
+@media (max-width: 640px) {
+  .hero-cloud-wrap { display: none; }
+}
+@media (min-width: 641px) and (max-width: 1024px) {
+  .hero-cloud-wrap { transform: scale(0.6); transform-origin: left center; }
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO CINEMATIC LIGHT — Premium flowing light effect
+   Gold + White + Sky Blue glowing tones moving dynamically
+   in a continuous smooth loop, darker and more visible
+   ══════════════════════════════════════════════════════ */
+
+.hero-cinematic-light {
+  position: absolute;
+  width: 180%;
+  height: 180%;
+  top: -40%;
+  right: -60%;
+  pointer-events: none;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  animation: cinematicLightFlow 24s ease-in-out infinite;
+  filter: blur(65px);
+  opacity: 0.82;
+}
+
+/* Three separate glowing orbs — Gold, White, Sky Blue */
+.hero-cinematic-light::before,
+.hero-cinematic-light::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Gold glow — largest, darker and more visible */
+.hero-cinematic-light::before {
+  width: 420px;
+  height: 420px;
+  top: 25%;
+  right: 30%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 215, 80, 0.88) 0%,
+    rgba(255, 200, 70, 0.72) 25%,
+    rgba(255, 185, 50, 0.50) 50%,
+    rgba(255, 170, 30, 0.22) 75%,
+    transparent 100%
+  );
+  animation: goldGlowPulse 10s ease-in-out infinite;
+  filter: blur(48px);
+}
+
+/* White glow — medium, brighter and more prominent */
+.hero-cinematic-light::after {
+  width: 320px;
+  height: 320px;
+  top: 35%;
+  right: 42%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(255, 255, 255, 0.78) 20%,
+    rgba(245, 250, 255, 0.55) 45%,
+    rgba(230, 240, 255, 0.28) 70%,
+    transparent 100%
+  );
+  animation: whiteGlowPulse 8s ease-in-out infinite;
+  animation-delay: -2s;
+  filter: blur(38px);
+}
+
+/* Sky Blue glow — darker and more saturated */
+.hero-cinematic-light {
+  background: radial-gradient(
+    ellipse 380px 380px at 55% 40%,
+    rgba(135, 206, 250, 0.82) 0%,
+    rgba(110, 185, 235, 0.68) 25%,
+    rgba(85, 165, 215, 0.48) 50%,
+    rgba(60, 145, 195, 0.25) 75%,
+    transparent 100%
+  );
+}
+
+/* Continuous smooth loop — top-right → left-center → down-left → back to top-right */
+@keyframes cinematicLightFlow {
+  0% {
+    transform: translate3d(0%, 0%, 0) scale(1) rotate(0deg);
+    opacity: 0.82;
+  }
+  12% {
+    transform: translate3d(-10%, 8%, 0) scale(1.05) rotate(-4deg);
+    opacity: 0.88;
+  }
+  25% {
+    transform: translate3d(-28%, 18%, 0) scale(1.10) rotate(-8deg);
+    opacity: 0.92;
+  }
+  37% {
+    transform: translate3d(-48%, 28%, 0) scale(1.08) rotate(-10deg);
+    opacity: 0.90;
+  }
+  50% {
+    transform: translate3d(-65%, 42%, 0) scale(1.05) rotate(-8deg);
+    opacity: 0.85;
+  }
+  62% {
+    transform: translate3d(-58%, 28%, 0) scale(1.08) rotate(-4deg);
+    opacity: 0.88;
+  }
+  75% {
+    transform: translate3d(-38%, 15%, 0) scale(1.10) rotate(0deg);
+    opacity: 0.90;
+  }
+  87% {
+    transform: translate3d(-15%, 5%, 0) scale(1.06) rotate(2deg);
+    opacity: 0.86;
+  }
+  100% {
+    transform: translate3d(0%, 0%, 0) scale(1) rotate(0deg);
+    opacity: 0.82;
+  }
+}
+
+/* Gold glow pulse — darker, more visible breathing */
+@keyframes goldGlowPulse {
+  0%, 100% {
+    transform: translate3d(0%, 0%, 0) scale(1);
+    opacity: 0.88;
+  }
+  25% {
+    transform: translate3d(6%, -4%, 0) scale(1.08);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translate3d(12%, -6%, 0) scale(1.12);
+    opacity: 0.90;
+  }
+  75% {
+    transform: translate3d(8%, -2%, 0) scale(1.05);
+    opacity: 0.92;
+  }
+}
+
+/* White glow pulse — brighter, more noticeable */
+@keyframes whiteGlowPulse {
+  0%, 100% {
+    transform: translate3d(0%, 0%, 0) scale(1);
+    opacity: 0.92;
+  }
+  33% {
+    transform: translate3d(-5%, 6%, 0) scale(1.10);
+    opacity: 0.85;
+  }
+  66% {
+    transform: translate3d(-10%, 3%, 0) scale(1.15);
+    opacity: 0.88;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-cinematic-light,
+  .hero-cinematic-light::before,
+  .hero-cinematic-light::after {
+    animation: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO STRIPE BEAM — Stripe-inspired diagonal light shaft
+   – Oversized element (200×200%) so rotation never shows edges
+   – Gradient band at ~48-52% of the element = centered diagonal
+   – Slow drift rotation (26s) with opacity breathing
+   ══════════════════════════════════════════════════════ */
+
+.hero-stripe-beam {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  pointer-events: none;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  background: linear-gradient(
+    -28deg,
+    transparent 0%,
+    transparent 34%,
+    rgba(100, 175, 225, 0.04) 40%,
+    rgba(190, 228, 255, 0.07) 45%,
+    rgba(235, 248, 255, 0.11) 48.5%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(190, 228, 255, 0.06) 52.5%,
+    rgba(100, 175, 225, 0.03) 57%,
+    transparent 63%,
+    transparent 100%
+  );
+  animation: stripeBeamDrift 26s ease-in-out infinite;
+}
+
+@keyframes stripeBeamDrift {
+  0%, 100% {
+    transform: translate3d(0%, 0%, 0) rotate(0deg);
+    opacity: 0.90;
+  }
+  28% {
+    transform: translate3d(-4%, 3%, 0) rotate(1.8deg);
+    opacity: 1;
+  }
+  56% {
+    transform: translate3d(2.5%, -2%, 0) rotate(-1.2deg);
+    opacity: 0.92;
+  }
+  82% {
+    transform: translate3d(-1.5%, 1%, 0) rotate(0.6deg);
+    opacity: 0.96;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-stripe-beam {
+    animation: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO SILK FLOW — Warm wave band flowing right → left
+   ─ Pink/magenta enters from right, fades through orange,
+     exits as gold/yellow on the left (silk-ribbon shape)
+   ─ Vertical positions are alternated to create the
+     wavy top edge seen in the reference (high–low–high–low)
+   ─ Heavy blur + screen blend = silk-soft glow over the
+     existing hero blue gradient (which is untouched)
+   ══════════════════════════════════════════════════════ */
+
+.hero-silk-right {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  background:
+    /* Sky-blue ribbon — upper-right.
+       White-hot core fades through pale blue into deeper sky blue. */
+    radial-gradient(ellipse 92% 130% at 100% 26%,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(210, 240, 255, 0.85) 12%,
+      rgba(150, 215, 252, 0.65) 28%,
+      rgba(110, 190, 240, 0.38) 45%,
+      rgba(95, 180, 235, 0.18) 58%,
+      transparent 70%),
+    /* Gold ribbon — lower-left.
+       Bright yellow-white core fades through gold into warm amber.
+       Both ellipses share a white highlight at their core so the
+       diagonal overlap zone averages to a clean pale cream — never
+       the muddy desaturated gray you'd get if sky-blue met gold raw. */
+    radial-gradient(ellipse 90% 125% at 0% 110%,
+      rgba(255, 250, 220, 0.95) 0%,
+      rgba(255, 225, 130, 0.85) 12%,
+      rgba(255, 200, 80, 0.65) 28%,
+      rgba(255, 175, 60, 0.38) 45%,
+      rgba(255, 160, 55, 0.18) 58%,
+      transparent 70%);
+  filter: blur(36px);
+  animation: silkRightToLeft 26s ease-in-out infinite;
+}
+
+@keyframes silkRightToLeft {
+  0%, 100% {
+    transform: translate3d(0%, 0%, 0) scale(1);
+    opacity: 0.92;
+  }
+  30% {
+    transform: translate3d(-3%, 2%, 0) scale(1.03);
+    opacity: 1;
+  }
+  60% {
+    transform: translate3d(2%, -1.5%, 0) scale(0.98);
+    opacity: 0.94;
+  }
+  85% {
+    transform: translate3d(-1.5%, 1.5%, 0) scale(1.02);
+    opacity: 0.96;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-silk-right {
+    animation: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO SVG BLOB — right-side wave drift
+   scaleX(-1) is baked into every keyframe so the flip
+   is preserved throughout the animation
+   ══════════════════════════════════════════════════════ */
+
+.hero-svg-blob {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform-origin: right center;
+  animation: svgBlobWave 20s ease-in-out infinite;
+}
+
+/*
+  No X translation — scaleX(-1) flips the X axis so any
+  positive translateX would move the blob LEFT on screen.
+  Y movement + scale gives the "air blowing through" feel:
+  the blob swells, lifts, and settles like a sail in wind.
+*/
+@keyframes svgBlobWave {
+  0%, 100% { transform: scaleX(-1) translateY(0px)   scale(1.00); }
+  15%       { transform: scaleX(-1) translateY(-24px) scale(1.07); }
+  35%       { transform: scaleX(-1) translateY(14px)  scale(1.13); }
+  55%       { transform: scaleX(-1) translateY(-18px) scale(1.08); }
+  75%       { transform: scaleX(-1) translateY(20px)  scale(1.04); }
+  90%       { transform: scaleX(-1) translateY(-8px)  scale(1.02); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-svg-blob { animation: none !important; }
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO PINK AURORA — Premium flowing pink/magenta/purple
+   silk-wave layer. Drifts left → right like wind over
+   gossamer silk; two semi-transparent layers at different
+   speeds create depth and organic shape-morphing.
+
+   GPU notes:
+   ─ Only transform + opacity are animated (compositor-only)
+   ─ will-change: transform, opacity promotes each element
+     to its own GPU layer before the first frame
+   ─ mix-blend-mode: screen gives the aurora an ethereal
+     glow over the dark-blue hero gradient (pink over navy
+     resolves to a luminous violet-pink aurora tone)
+   ─ The hero section already has isolation: isolate so all
+     screen blends are self-contained within it
+   ══════════════════════════════════════════════════════ */
+
+/* ── Main aurora body — warm sunlight gold, off-left, drifts right ── */
+.hero-pink-aurora {
+  position: absolute;
+  width: 160%;
+  height: 150%;
+  top: -20%;
+  left: -45%;
+  pointer-events: none;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  border-radius: 62% 38% 58% 42% / 50% 45% 55% 50%;
+  background: radial-gradient(
+    ellipse 62% 55% at 52% 48%,
+    rgba(255, 210, 80,  0.52)  0%,
+    rgba(255, 185, 45,  0.38) 22%,
+    rgba(240, 160, 20,  0.20) 48%,
+    rgba(200, 130, 10,  0.08) 68%,
+    transparent                85%
+  );
+  filter: blur(72px);
+  mix-blend-mode: screen;
+  opacity: 0.82;
+  animation: pinkAuroraFlow 30s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  animation-delay: -10s;
+}
+
+/* Secondary orb — deep sky blue, drifts independently for cool contrast */
+.hero-pink-aurora::before {
+  content: '';
+  position: absolute;
+  inset: 8% 12% 8% 12%;
+  border-radius: 45% 55% 62% 38% / 55% 42% 58% 45%;
+  background: radial-gradient(
+    ellipse 72% 68% at 56% 46%,
+    rgba(20,  130, 210, 0.48)  0%,
+    rgba(15,  105, 185, 0.32) 28%,
+    rgba(10,   80, 158, 0.14) 54%,
+    transparent                76%
+  );
+  filter: blur(48px);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  animation: pinkAuroraBefore 23s ease-in-out infinite;
+  animation-delay: -6s;
+}
+
+/* Tertiary highlight — lighter gold, wide soft halo */
+.hero-pink-aurora::after {
+  content: '';
+  position: absolute;
+  inset: 18% 4% 18% 18%;
+  border-radius: 55% 45% 45% 55% / 48% 55% 45% 52%;
+  background: radial-gradient(
+    ellipse 76% 72% at 44% 54%,
+    rgba(255, 230, 130, 0.40)  0%,
+    rgba(255, 210,  90, 0.24) 26%,
+    rgba(230, 180,  50, 0.10) 52%,
+    transparent                76%
+  );
+  filter: blur(90px);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  animation: pinkAuroraAfter 38s ease-in-out infinite;
+  animation-delay: -18s;
+}
+
+/* ── Secondary layer — deep azure sky, wide spread, slower ── */
+.hero-pink-aurora-secondary {
+  position: absolute;
+  width: 130%;
+  height: 130%;
+  top: 10%;
+  left: -10%;
+  pointer-events: none;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  border-radius: 50% 50% 52% 48% / 52% 50% 50% 48%;
+  background: radial-gradient(
+    ellipse 56% 50% at 44% 56%,
+    rgba(100, 190, 255, 0.28)  0%,
+    rgba(60,  155, 230, 0.16) 32%,
+    rgba(30,  120, 200, 0.06) 60%,
+    transparent                80%
+  );
+  filter: blur(108px);
+  mix-blend-mode: screen;
+  opacity: 0.72;
+  animation: pinkAurora2Flow 42s ease-in-out infinite;
+  animation-delay: -22s;
+}
+
+/* ── Keyframes ── */
+
+/* Main body: slow left → right wind drift */
+@keyframes pinkAuroraFlow {
+  0%, 100% {
+    transform: translate3d(  0%, 5%, 0) scale(1.00);
+    opacity: 0.75;
+  }
+  15% {
+    transform: translate3d(  3%, 1%, 0) scale(1.04);
+    opacity: 0.82;
+  }
+  30% {
+    transform: translate3d(  7%,-3%, 0) scale(1.08);
+    opacity: 0.88;
+  }
+  46% {
+    transform: translate3d( 12%,-5%, 0) scale(1.06);
+    opacity: 0.84;
+  }
+  60% {
+    transform: translate3d( 15%,-2%, 0) scale(1.09);
+    opacity: 0.78;
+  }
+  74% {
+    transform: translate3d( 10%, 2%, 0) scale(1.05);
+    opacity: 0.80;
+  }
+  87% {
+    transform: translate3d(  4%, 5%, 0) scale(1.02);
+    opacity: 0.77;
+  }
+}
+
+/* ::before — independent organic drift, slight counter-phase */
+@keyframes pinkAuroraBefore {
+  0%, 100% {
+    transform: translate3d(  0%,  0%, 0) scale(1.00);
+    opacity: 0.82;
+  }
+  20% {
+    transform: translate3d( -3%,  5%, 0) scale(1.07);
+    opacity: 0.90;
+  }
+  42% {
+    transform: translate3d(  5%,  8%, 0) scale(1.12);
+    opacity: 0.86;
+  }
+  64% {
+    transform: translate3d(  9%,  3%, 0) scale(1.08);
+    opacity: 0.88;
+  }
+  82% {
+    transform: translate3d(  3%, -3%, 0) scale(1.04);
+    opacity: 0.84;
+  }
+}
+
+/* ::after — slowest, drifts diagonally for morphing feel */
+@keyframes pinkAuroraAfter {
+  0%, 100% {
+    transform: translate3d(  0%,  0%, 0) scale(1.00);
+    opacity: 0.72;
+  }
+  26% {
+    transform: translate3d(  6%, -5%, 0) scale(1.10);
+    opacity: 0.80;
+  }
+  52% {
+    transform: translate3d( 12%, -1%, 0) scale(1.14);
+    opacity: 0.76;
+  }
+  78% {
+    transform: translate3d(  5%,  5%, 0) scale(1.06);
+    opacity: 0.78;
+  }
+}
+
+/* Secondary layer — wider arc, sweeps center → right */
+@keyframes pinkAurora2Flow {
+  0%, 100% {
+    transform: translate3d(  4%,  0%, 0) scale(1.00);
+    opacity: 0.62;
+  }
+  22% {
+    transform: translate3d( 10%, -4%, 0) scale(1.06);
+    opacity: 0.70;
+  }
+  46% {
+    transform: translate3d( 16%, -6%, 0) scale(1.10);
+    opacity: 0.68;
+  }
+  68% {
+    transform: translate3d( 11%, -1%, 0) scale(1.07);
+    opacity: 0.65;
+  }
+  86% {
+    transform: translate3d(  6%,  3%, 0) scale(1.03);
+    opacity: 0.63;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-pink-aurora,
+  .hero-pink-aurora::before,
+  .hero-pink-aurora::after,
+  .hero-pink-aurora-secondary {
+    animation: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO RIBBON WAVE — teal + purple flowing silk ribbons
+
+   .hrw-teal   : SVG <g> — slow left-to-right undulation
+   .hrw-purple : SVG <g> — independent counter-drift
+   .hrw-teal-line : individual line shimmer (alternating phase)
+   .hrw-orb    : pink convergence orb pulse
+
+   GPU notes:
+   ─ Only transform + opacity are animated
+   ─ will-change: transform on the <g> elements promotes
+     each group to its own compositor layer
+   ─ skewY on the teal group adds silk-wave distortion
+     without triggering layout (SVG transform space)
+   ══════════════════════════════════════════════════════ */
+
+.hrw-teal {
+  will-change: transform;
+  backface-visibility: hidden;
+  /* Centre pivot so the wave undulates symmetrically across the full screen */
+  transform-origin: 50% 50%;
+  animation: hrwTealFlow 20s ease-in-out infinite;
+}
+
+/* Alternating shimmer — odd/even teal lines out of phase */
+.hrw-teal-line:nth-child(odd) {
+  animation: hrwLineShimmer 5s ease-in-out infinite;
+}
+.hrw-teal-line:nth-child(even) {
+  animation: hrwLineShimmer 5s ease-in-out infinite;
+  animation-delay: -2.5s;
+}
+
+/* Full-screen teal wave — slow ocean-like undulation across the entire hero */
+@keyframes hrwTealFlow {
+  0%, 100% {
+    transform: translate3d(  0px,   0px, 0) rotate(0.0deg) skewY( 0.00deg);
+    opacity: 0.90;
+  }
+  18% {
+    transform: translate3d(  6px, -22px, 0) rotate(0.6deg) skewY(-0.80deg);
+    opacity: 0.96;
+  }
+  38% {
+    transform: translate3d( 14px, -14px, 0) rotate(1.1deg) skewY(-1.30deg);
+    opacity: 1.00;
+  }
+  58% {
+    transform: translate3d( 18px,  -4px, 0) rotate(0.9deg) skewY(-0.90deg);
+    opacity: 0.96;
+  }
+  76% {
+    transform: translate3d(  8px,  16px, 0) rotate(0.3deg) skewY( 0.25deg);
+    opacity: 0.92;
+  }
+  90% {
+    transform: translate3d(  2px,   6px, 0) rotate(0.1deg) skewY( 0.05deg);
+    opacity: 0.90;
+  }
+}
+
+
+/* Individual line shimmer — alternating opacity creates ribbon depth */
+@keyframes hrwLineShimmer {
+  0%, 100% { opacity: 1.00; }
+  50%       { opacity: 0.52; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hrw-teal,
+  .hrw-teal-line {
+    animation: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO RIBBON SWEEP — diagonal band slightly darker than
+   the hero gradient. Enters from the right, sweeps left,
+   billows in size, and glows from its centre.
+
+   Two pseudo-elements stacked:
+   ::before — dark ribbon body (translucent navy)
+   ::after  — bright inner glow (blurred blue-white core)
+
+   GPU notes:
+   ─ Only transform + opacity animated (compositor-only)
+   ─ scaleY variation in keyframes = organic "billowing"
+   ─ rotate variation = ribbon edge undulation
+   ─ overflow:hidden on the wrapper clips at hero bounds
+   ══════════════════════════════════════════════════════ */
+
+/* Dark ribbon body — hidden to avoid dark diagonal band over hero */
+.hero-ribbon-sweep::before {
+  content: '';
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Luminous glow core — disabled */
+.hero-ribbon-sweep::after {
+  content: '';
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  animation: none;
+}
+
+/* Right → left sweep with billowing scaleY and slight angle variation */
+@keyframes heroRibbonSweep {
+  0% {
+    transform: rotate(-22deg) translateX( 200%) scaleY(1.00);
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  20% {
+    transform: rotate(-23deg) translateX( 138%) scaleY(1.55);
+    opacity: 0.92;
+  }
+  42% {
+    transform: rotate(-21deg) translateX(  55%) scaleY(0.72);
+    opacity: 1.00;
+  }
+  63% {
+    transform: rotate(-24deg) translateX( -30%) scaleY(1.38);
+    opacity: 0.96;
+  }
+  84% {
+    transform: rotate(-22deg) translateX(-115%) scaleY(0.86);
+    opacity: 1.00;
+  }
+  95% {
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(-22deg) translateX(-200%) scaleY(1.00);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-ribbon-sweep::before,
+  .hero-ribbon-sweep::after {
+    animation: none !important;
+  }
+}
+
+/* Navbar CTA heartbeat pulse + inner shine */
+@keyframes navCtaPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.7), 0 2px 12px rgba(255,255,255,0.35); }
+  60%  { box-shadow: 0 0 0 10px rgba(255,255,255,0),  0 2px 12px rgba(255,255,255,0.35); }
+  100% { box-shadow: 0 0 0 0 rgba(255,255,255,0),     0 2px 12px rgba(255,255,255,0.35); }
+}
+@keyframes navCtaShine {
+  0%   { transform: translateX(-160%) skewX(-20deg); }
+  40%  { transform: translateX(260%)  skewX(-20deg); }
+  100% { transform: translateX(260%)  skewX(-20deg); }
+}
+.nav-cta-pulse {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(255,255,255,0.55), 0 2px 8px rgba(26,110,154,0.18);
+}
+.nav-cta-pulse::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255,255,255,0) 15%,
+    rgba(255,255,255,0.65) 50%,
+    rgba(255,255,255,0) 85%,
+    transparent 100%
+  );
+  animation: navCtaShine 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
